@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
-use MilesChou\Template\Sample;
+use MilesChou\Laradra\Sample;
 use Tests\TestCase;
 
 class SampleTest extends TestCase
