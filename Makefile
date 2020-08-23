@@ -4,11 +4,11 @@ CLIENT_ID := some-client
 CLIENT_SECRET := some-secret
 CLIENT_CALLBACK := http://web.localhost:8080/callback
 
-.PHONY: all clean clean-all check test analyse coverage
+.PHONY: all clean clean-all check test coverage
 
 # ---------------------------------------------------------------------
 
-all: test analyse
+all: test
 
 clean:
 	rm -rf ./build
@@ -22,9 +22,6 @@ check:
 
 test: clean check
 	phpdbg -qrr vendor/bin/phpunit
-
-analyse:
-	php vendor/bin/phpstan analyse src --level=max
 
 coverage: test
 	@if [ "`uname`" = "Darwin" ]; then open build/coverage/index.html; fi

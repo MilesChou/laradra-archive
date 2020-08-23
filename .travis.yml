@@ -3,7 +3,6 @@ dist: xenial
 language: php
 
 php:
-  - 7.1
   - 7.2
   - 7.3
   - 7.4
@@ -18,7 +17,6 @@ install:
 
 script:
   - make test
-  - make analyse
 
 cache:
   directories:
