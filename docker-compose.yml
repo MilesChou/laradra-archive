@@ -1,0 +1,62 @@
+version: '3'
+
+services:
+  web:
+    image: 104corp/php-testing:7.3
+    container_name: web.localhost
+    hostname: web.localhost
+    ports:
+      - 8080:8080
+    working_dir: /var/www/html
+    command: ["php", "-S", "0.0.0.0:8080", "-t", "public"]
+    environment:
+      LOG_CHANNEL: stdout
+      APP_URL: http://web.localhost:8080
+      HYDRA_CLIENT_ID: some-client
+      HYDRA_CLIENT_SECRET: some-secret
+      HYDRA_REDIRECT_URI: http://web.localhost:8080/rp/callback
+      HYDRA_ADMIN_URL: http://hydra.localhost:4445
+      HYDRA_PUBLIC_URL: http://hydra.localhost:4444
+    volumes:
+      - .:/var/www/html
+    restart: unless-stopped
+    depends_on:
+      - hydra
+
+  hydra:
+    image: oryd/hydra:v1.2.3
+    container_name: hydra.localhost
+    hostname: hydra.localhost
+    ports:
+      - 4444:4444
+    command:
+      serve all --dangerous-force-http
+    environment:
+      DSN: mysql://root:secret@tcp(mysqld:3306)/hydra?max_conns=20&max_idle_conns=4
+      URLS_SELF_ISSUER: http://hydra.localhost:4444
+      URLS_LOGIN: http://web.localhost:8080/idp/login
+      URLS_CONSENT: http://web.localhost:8080/idp/consent
+      URLS_LOGOUT: http://web.localhost:8080/idp/logout
+      SECRETS_SYSTEM: youReallyNeedToChangeThis
+      OIDC_SUBJECT_TYPES_SUPPORTED: public,pairwise
+      OIDC_SUBJECT_TYPE_PAIRWISE_SALT: youReallyNeedToChangeThis
+    restart: unless-stopped
+
+    depends_on:
+      - hydra-migrate
+
+  hydra-migrate:
+    image: oryd/hydra:v1.2.3
+    environment:
+      - DSN=mysql://root:secret@tcp(mysqld:3306)/hydra?max_conns=20&max_idle_conns=4
+    command:
+      migrate sql -e --yes
+    restart: on-failure
+
+  mysqld:
+    image: mysql:5.7
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: hydra
