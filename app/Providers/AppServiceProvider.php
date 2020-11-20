@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Hydra\SDK\Api\AdminApi;
 use Hydra\SDK\Api\PublicApi;
 use Hydra\SDK\ApiClient;
 use Hydra\SDK\Configuration;
@@ -9,26 +10,20 @@ use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     *
-     * @return void
-     */
     public function register()
     {
-        $this->app->singleton(Configuration::class, function () {
+        $this->app->singleton(AdminApi::class, function () {
             $config = new Configuration();
-            $config->setHost('localhost');
+            $config->setHost(config('hydra.admin_url'));
 
-            return new Configuration();
-        });
-
-        $this->app->singleton(ApiClient::class, function () {
-            return new ApiClient($this->app->make(Configuration::class));
+            return new AdminApi(new ApiClient($config));
         });
 
         $this->app->singleton(PublicApi::class, function () {
-            return new PublicApi($this->app->make(ApiClient::class));
+            $config = new Configuration();
+            $config->setHost(config('hydra.public_url'));
+
+            return new PublicApi(new ApiClient($config));
         });
     }
 }
