@@ -15,8 +15,9 @@
     ],
     "require": {
         "php": "^7.2",
-        "guzzlehttp/guzzle": "^7.2",
-        "ory/hydra-sdk": "^1.1"
+        "ext-json": "*",
+        "guzzlehttp/guzzle": "^6.2",
+        "ory/hydra-client": "^1.8"
     },
     "require-dev": {
         "laravel/framework": "^6.20 | ^7.6 | ^8",

@@ -2,15 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\OpenIDConnect\Client\Manager;
-use App\OpenIDConnect\Provider\Hydra;
-use Hydra\SDK\Api\AdminApi;
 use Hydra\SDK\Api\PublicApi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use OpenIDConnect\Core\Client;
-use OpenIDConnect\Core\Exceptions\OpenIDProviderException;
-use OpenIDConnect\Core\Token\TokenSet;
 use RuntimeException;
 
 /**

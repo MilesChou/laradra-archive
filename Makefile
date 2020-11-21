@@ -2,7 +2,7 @@
 
 CLIENT_ID := some-client
 CLIENT_SECRET := some-secret
-CLIENT_CALLBACK := http://web.localhost:8080/callback
+CLIENT_CALLBACK := http://web.localhost:8080/rp/callback
 
 .PHONY: all clean clean-all check test coverage
 
