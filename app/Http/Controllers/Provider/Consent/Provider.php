@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Provider;
+namespace App\Http\Controllers\Provider\Consent;
 
 use App\Exceptions\ConsentRequestException;
 use Illuminate\Http\Request;
@@ -9,7 +9,7 @@ use Ory\Hydra\Client\Api\AdminApi;
 use Ory\Hydra\Client\ApiException;
 use Ory\Hydra\Client\Model\AcceptConsentRequest;
 
-class ConsentProvider
+class Provider
 {
     public function __invoke(Request $request, AdminApi $hydra)
     {
@@ -20,7 +20,7 @@ class ConsentProvider
 
             Log::debug('Get the ConsentRequest', json_decode((string)$consentRequest, true));
         } catch (ApiException $e) {
-            Log::error('Hydra Admin API Error: ' . $e->getMessage(), [
+            Log::error('Hydra Admin API error: ' . $e->getMessage(), [
                 'body' => json_decode($e->getResponseBody(), true),
             ]);
 
@@ -28,20 +28,18 @@ class ConsentProvider
         }
 
         if ($consentRequest->getSkip()) {
-            $requestedScope = $consentRequest->getRequestedScope();
-
-            Log::info('Requested scopes', $requestedScope);
-
-            $completed = $hydra->acceptConsentRequest($consentChallenge, new AcceptConsentRequest([
-                'grant_scope' => $requestedScope,
-                'grant_access_token_audience' => $consentRequest->getRequestedAccessTokenAudience(),
-            ]));
+            try {
+                $completed = $hydra->acceptConsentRequest($consentChallenge, new AcceptConsentRequest());
+            } catch (ApiException $e) {
+                throw new ConsentRequestException("Could not accept consent_challenge '{$consentChallenge}'");
+            }
 
             return redirect()->to($completed->getRedirectTo());
         }
 
-        return view('consent', [
+        return view('provider.consent_page', [
             'consent_challenge' => $consentChallenge,
+            'scopes' => $consentRequest->getRequestedScope(),
         ]);
     }
 }

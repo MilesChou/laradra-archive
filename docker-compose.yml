@@ -18,7 +18,7 @@ services:
       HYDRA_ADMIN_URL: http://hydra.localhost:4445
       HYDRA_PUBLIC_URL: http://hydra.localhost:4444
     volumes:
-      - .:/var/www/html
+      - .:/var/www/html:delegated
     restart: unless-stopped
     depends_on:
       - hydra
@@ -34,9 +34,9 @@ services:
     environment:
       DSN: mysql://root:secret@tcp(mysqld:3306)/hydra?max_conns=20&max_idle_conns=4
       URLS_SELF_ISSUER: http://hydra.localhost:4444
-      URLS_LOGIN: http://web.localhost:8080/idp/login
-      URLS_CONSENT: http://web.localhost:8080/idp/consent
-      URLS_LOGOUT: http://web.localhost:8080/idp/logout
+      URLS_LOGIN: http://web.localhost:8080/provider/login
+      URLS_CONSENT: http://web.localhost:8080/provider/consent
+      URLS_LOGOUT: http://web.localhost:8080/provider/logout
       SECRETS_SYSTEM: youReallyNeedToChangeThis
       OIDC_SUBJECT_TYPES_SUPPORTED: public,pairwise
       OIDC_SUBJECT_TYPE_PAIRWISE_SALT: youReallyNeedToChangeThis

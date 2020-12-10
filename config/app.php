@@ -161,6 +161,7 @@ return [
          * Application Service Providers...
          */
         App\Providers\AppServiceProvider::class,
+        App\Providers\OpenIDConnectServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
     ],

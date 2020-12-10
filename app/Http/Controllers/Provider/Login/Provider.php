@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Controllers\Provider;
+namespace App\Http\Controllers\Provider\Login;
 
-use App\Exceptions\ConsentRequestException;
 use App\Exceptions\LoginRequestException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -10,7 +9,7 @@ use Ory\Hydra\Client\Api\AdminApi;
 use Ory\Hydra\Client\ApiException;
 use Ory\Hydra\Client\Model\AcceptLoginRequest;
 
-class LoginProvider
+class Provider
 {
     public function __invoke(Request $request, AdminApi $admin)
     {
@@ -30,7 +29,7 @@ class LoginProvider
 
         if ($loginRequest->getSkip()) {
             try {
-                $completedRequest = $admin->acceptLoginRequest($loginChallenge, new AcceptLoginRequest([
+                $completed = $admin->acceptLoginRequest($loginChallenge, new AcceptLoginRequest([
                     'subject' => $loginRequest->getSubject(),
                 ]));
             } catch (ApiException $e) {
@@ -41,10 +40,10 @@ class LoginProvider
                 throw new LoginRequestException("Could not accept login_challenge '{$loginChallenge}'");
             }
 
-            return redirect()->to($completedRequest->getRedirectTo());
+            return redirect()->to($completed->getRedirectTo());
         }
 
-        return view('login', [
+        return view('provider.login_page', [
             'login_challenge' => $loginChallenge,
         ]);
     }

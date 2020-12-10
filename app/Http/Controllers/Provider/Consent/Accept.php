@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Provider;
+namespace App\Http\Controllers\Provider\Consent;
 
 use App\Contracts\Strategies\AcceptConsentHandler;
 use App\Events\AcceptedConsentRequest;
@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 use Ory\Hydra\Client\Api\AdminApi;
 use Ory\Hydra\Client\ApiException;
 
-class ConsentAcceptAction
+class Accept
 {
     public function __invoke(Request $request, AdminApi $hydra, AcceptConsentHandler $handler)
     {

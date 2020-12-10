@@ -2,70 +2,46 @@
 
 namespace App\Http\Controllers;
 
-use Hydra\SDK\Api\PublicApi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use OpenIDConnect\Client;
+use OpenIDConnect\Exceptions\OpenIDProviderException;
+use OpenIDConnect\Token\TokenSet;
+use Ory\Hydra\Client\Api\PublicApi;
 use RuntimeException;
 
 /**
- * @see http://127.0.0.1:8080/login
+ * @see http://web.localhost:8080/rp/login
  */
 class RpController
 {
-    public function login(Request $request, Manager $manager)
+    public function login(Request $request, Client $oidc)
     {
-        /** @var Client $hydra */
-        $hydra = $manager->driver('hydra');
-
-        $authorizationUrl = $hydra->createAuthorizeRedirectResponse([
+        $parameters = array_merge([
             'response_type' => 'code',
             'scope' => 'openid offline_access',
             'redirect_uri' => env('HYDRA_REDIRECT_URI'),
-        ]);
+        ], $request->all());
 
-        $request->session()->put('state', $hydra->getState());
+        $authorizationUrl = $oidc->createAuthorizeRedirectResponse($parameters);
 
-        return $authorizationUrl;
-    }
-
-    public function loginByIdToken(Request $request, Manager $manager)
-    {
-        $idToken = '';
-
-        /** @var Client $hydra */
-        $hydra = $manager->driver('hydra');
-
-        $authorizationUrl = $hydra->createAuthorizeRedirectResponse([
-            'response_type' => 'code',
-            'scope' => 'openid',
-            'redirect_uri' => env('HYDRA_REDIRECT_URI'),
-            'id_token_hint' => $idToken,
-            'prompt' => 'none',
-        ]);
-
-        $request->session()->put('state', $hydra->getState());
+        $request->session()->put('state', $oidc->getState());
 
         return $authorizationUrl;
     }
 
-    public function refreshToken(Request $request, Hydra $hydra)
+    public function refreshToken(Request $request, PublicApi $hydra)
     {
         $refreshToken = $request->get('refresh_token');
 
-        /** @var PublicApi $public */
-        $public = $hydra->driver('public');
-
-        $tokenResponse = $public->oauth2Token('refresh_token', null, $refreshToken);
+        $tokenResponse = $hydra->oauth2Token('refresh_token', null, $refreshToken);
 
         dump(json_decode((string)$tokenResponse, true));
     }
 
-    public function callback(Request $request, Manager $manager)
+    public function callback(Request $request, Client $oidc)
     {
         $session = $request->session();
-
-        /** @var Client $hydra */
-        $hydra = $manager->driver('hydra');
 
         if ($request->has('error')) {
             dd($request->all());
@@ -73,7 +49,7 @@ class RpController
 
         try {
             /** @var TokenSet $tokenSet */
-            $tokenSet = $hydra->handleOpenIDConnectCallback($request->all(), [
+            $tokenSet = $oidc->handleCallback($request->all(), [
                 'state' => $session->get('state'),
                 'redirect_uri' => env('HYDRA_REDIRECT_URI'),
             ]);
