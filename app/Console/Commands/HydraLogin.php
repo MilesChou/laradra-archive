@@ -234,6 +234,16 @@ class HydraLogin extends Command
                     'redirect_uri' => $redirectUri,
                 ]);
 
+            if ($response->json('error') && $this->output->isVeryVerbose()) {
+                $this->output->error('Token endpoint ERROR');
+
+                $this->table(['key', 'value'], collect($response->json())->map(function ($v, $k) {
+                    return [$k, $v];
+                })->toArray());
+
+                return 1;
+            }
+
             $useTime = microtime(true) - $startTime;
 
             if ($useTime > $threshold) {
