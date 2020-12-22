@@ -25,6 +25,28 @@ class OpenIDConnectServiceProvider extends ServiceProvider
 {
     public function register()
     {
+        $this->registerCommonService();
+        $this->registerClientService();
+        $this->registerProviderService();
+    }
+
+    private function registerCommonService(): void
+    {
+        $this->app->singleton(HttpClientInterface::class, function () {
+            return new HttpClientManager($this->app->make(ClientInterface::class));
+        });
+
+        $this->app->singleton(HttpClientInterface::class, function () {
+            return new HttpClientManager($this->app->make(ClientInterface::class));
+        });
+
+        $this->app->singleton(ClientInterface::class, function () {
+            return new Psr18Client();
+        });
+    }
+
+    private function registerClientService(): void
+    {
         $this->app->singleton(Client::class, function () {
             return new Client(
                 $this->app->make(ConfigInterface::class),
@@ -56,19 +78,10 @@ class OpenIDConnectServiceProvider extends ServiceProvider
                 'redirect_uri' => config('openid_connect.client.redirect_uri'),
             ]);
         });
+    }
 
-        $this->app->singleton(HttpClientInterface::class, function () {
-            return new HttpClientManager($this->app->make(ClientInterface::class));
-        });
-
-        $this->app->singleton(HttpClientInterface::class, function () {
-            return new HttpClientManager($this->app->make(ClientInterface::class));
-        });
-
-        $this->app->singleton(ClientInterface::class, function () {
-            return new Psr18Client();
-        });
-
+    private function registerProviderService(): void
+    {
         $this->app->singleton(AcceptConsentHandler::class, DefaultAcceptConsentHandler::class);
         $this->app->singleton(RejectConsentHandler::class, DefaultRejectConsentHandler::class);
     }
