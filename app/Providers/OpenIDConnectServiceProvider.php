@@ -36,10 +36,6 @@ class OpenIDConnectServiceProvider extends ServiceProvider
             return new HttpClientManager($this->app->make(ClientInterface::class));
         });
 
-        $this->app->singleton(HttpClientInterface::class, function () {
-            return new HttpClientManager($this->app->make(ClientInterface::class));
-        });
-
         $this->app->singleton(ClientInterface::class, function () {
             return new Psr18Client();
         });
