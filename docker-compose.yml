@@ -40,10 +40,20 @@ services:
       SECRETS_SYSTEM: youReallyNeedToChangeThis
       OIDC_SUBJECT_TYPES_SUPPORTED: public,pairwise
       OIDC_SUBJECT_TYPE_PAIRWISE_SALT: youReallyNeedToChangeThis
+      TRACING_PROVIDER: jaeger
+      TRACING_PROVIDER_JAEGER_SAMPLING_SERVER_URL: http://jaeger:5778/sampling
+      TRACING_PROVIDER_JAEGER_LOCAL_AGENT_ADDRESS: jaeger:6831
+      TRACING_PROVIDER_JAEGER_SAMPLING_TYPE: const
+      TRACING_PROVIDER_JAEGER_SAMPLING_VALUE: 1
     restart: unless-stopped
 
     depends_on:
       - hydra-migrate
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.21.0
+    ports:
+      - "16686:16686/tcp"
 
   hydra-migrate:
     image: oryd/hydra:v1.2.3
