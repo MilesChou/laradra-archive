@@ -161,7 +161,10 @@ return [
          * Application Service Providers...
          */
         App\Providers\AppServiceProvider::class,
-        App\Providers\OpenIDConnectServiceProvider::class,
+        App\Providers\HttpClientProvider::class,
+        App\Providers\HydraHandlerProvider::class,
+        App\Providers\HydraSdkProvider::class,
+        App\Providers\OpenIDConnectProvider::class,
         App\Providers\RouteServiceProvider::class,
 
     ],

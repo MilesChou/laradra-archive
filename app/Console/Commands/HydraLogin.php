@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use Carbon\Carbon;
-use DateTime;
 use GuzzleHttp\Psr7\Uri;
 use Illuminate\Console\Command;
 use Illuminate\Http\Client\Response;

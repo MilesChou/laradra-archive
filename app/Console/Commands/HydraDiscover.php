@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Hydra\SDK\Api\PublicApi;
 use Illuminate\Console\Command;
+use Ory\Hydra\Client\Api\PublicApi;
 
 class HydraDiscover extends Command
 {
