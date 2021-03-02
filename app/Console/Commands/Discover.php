@@ -5,7 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Ory\Hydra\Client\Api\PublicApi;
 
-class HydraDiscover extends Command
+class Discover extends Command
 {
     protected $signature = 'hydra:discover';
 

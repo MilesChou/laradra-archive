@@ -18,9 +18,9 @@ use RuntimeException;
 /**
  * Simulate login on Hydra system
  */
-class HydraLogin extends Command
+class SimulateLogin extends Command
 {
-    protected $signature = 'hydra:login
+    protected $signature = 'hydra:simulate:login
                             {--C|context=* : Context for handle login request, e.g. "foo=bar"}
                             {--client=some-client : Set client ID}
                             {--secret=some-secret : Set client secret}
@@ -219,7 +219,13 @@ class HydraLogin extends Command
                 $this->output->success(sprintf('Consent successfully, took %.3fs', $useTime));
             }
 
-            $redirectQuery = $this->parseRedirectTo($response, true);
+            try {
+                $redirectQuery = $this->parseRedirectTo($response, true);
+            } catch (\RuntimeException $e) {
+                $this->output->error($e->getMessage());
+
+                continue;
+            }
 
             $tokenEndpoint = $openIDConfiguration->getTokenEndpoint();
 
@@ -233,14 +239,16 @@ class HydraLogin extends Command
                     'redirect_uri' => $redirectUri,
                 ]);
 
-            if ($response->json('error') && $this->output->isVeryVerbose()) {
+            if ($response->json('error')) {
                 $this->output->error('Token endpoint ERROR');
 
-                $this->table(['key', 'value'], collect($response->json())->map(function ($v, $k) {
-                    return [$k, $v];
-                })->toArray());
+                if ($this->output->isVeryVerbose()) {
+                    $this->table(['key', 'value'], collect($response->json())->map(function ($v, $k) {
+                        return [$k, $v];
+                    })->toArray());
+                }
 
-                return 1;
+                continue;
             }
 
             $useTime = microtime(true) - $startTime;
@@ -256,6 +264,10 @@ class HydraLogin extends Command
             }
 
             $idToken = $response->json('id_token');
+
+            if (empty($idToken)) {
+                dd($response->json());
+            }
 
             $this->output->listing([
                 'Access Token: ' . $response->json('access_token'),
