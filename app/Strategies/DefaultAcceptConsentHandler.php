@@ -17,12 +17,8 @@ class DefaultAcceptConsentHandler implements AcceptConsentHandler
     {
         $requestScopes = explode(' ', $consentRequest->getClient()->getScope());
 
-        Log::info('Requested scopes', $requestScopes);
-
         return new AcceptConsentRequest([
-            'grant_scope' => $requestScopes,
-            'remember' => true,
-            'remember_for' => 3600,
+            'grantScope' => $requestScopes,
         ]);
     }
 }

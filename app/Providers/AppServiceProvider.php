@@ -30,6 +30,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(PublicApi::class, function () {
             $config = new Configuration();
             $config->setHost(config('hydra.public_url'));
+            $config->setUsername(config('openid_connect.client.id'));
+            $config->setPassword(config('openid_connect.client.secret'));
 
             return new PublicApi(
                 $this->app->make(ClientInterface::class),

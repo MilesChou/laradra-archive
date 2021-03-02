@@ -26,6 +26,9 @@ test: clean check
 coverage: test
 	@if [ "`uname`" = "Darwin" ]; then open build/coverage/index.html; fi
 
+log:
+	tail -f storage/logs/*.log
+
 up:
 	docker-compose up -d
 	docker-compose logs -f

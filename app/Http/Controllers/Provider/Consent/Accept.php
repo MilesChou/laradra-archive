@@ -28,6 +28,8 @@ class Accept
 
         $acceptConsentRequest = $handler->handleConsentRequest($request, $consentRequest);
 
+        Log::debug('Build AcceptConsentRequest.', (array)$acceptConsentRequest->jsonSerialize());
+
         try {
             $completed = $hydra->acceptConsentRequest($consentChallenge, $acceptConsentRequest);
         } catch (ApiException $e) {
