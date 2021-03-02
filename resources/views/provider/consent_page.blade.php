@@ -4,7 +4,7 @@
 </head>
 <body>
 
-<form method="post" action="{{ route('provider.consent_action') }}">
+<form method="post" action="{{ route('openid_provider.consent.provider') }}">
     <input type="hidden" name="consent_challenge" value="{{ $consent_challenge }}"/><br/>
     @foreach($scopes as $scope)
         <label><input type="checkbox" name="{{ $scope }}"/> {{ $scope }}</label><br/>
