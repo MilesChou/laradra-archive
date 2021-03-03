@@ -7,6 +7,7 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\RequestOptions;
 use Illuminate\Console\Command;
 use Ory\Hydra\Client\Api\AdminApi;
 
@@ -19,7 +20,7 @@ use Ory\Hydra\Client\Api\AdminApi;
 class RevokeLoginConsentSession extends Command
 {
     protected $signature = 'hydra:login-consent:session:revoke
-                            {subject : sub}';
+                            {subject* : sub}';
 
     protected $description = "Revoke login and consent Subject's Authentication Session";
 
@@ -32,22 +33,28 @@ class RevokeLoginConsentSession extends Command
             $this->output->note('Host: ' . $host);
         }
 
-        $subject = (string)$this->argument('subject');
+        $subject = $this->argument('subject');
 
-        $requests = [
-            $this->createRevokeConsentSessionRequest($host, $subject),
-            $this->createRevokeLoginSessionRequest($host, $subject),
-        ];
+        $requests = collect($subject)->reduce(function ($arr, $subject) use ($host) {
+            $arr[] = $this->createRevokeConsentSessionRequest($host, $subject);
+            $arr[] = $this->createRevokeLoginSessionRequest($host, $subject);
 
-        $client = new Client();
+            return $arr;
+        }, []);
+
+        shuffle($requests);
+
+        $client = new Client([
+            RequestOptions::TIMEOUT => 300,
+        ]);
 
         $pool = new Pool($client, $requests, [
             'concurrency' => 5,
             'fulfilled' => function (Response $response, $index) {
-                $this->output->info('Success' . $index);
+                $this->line('Success: ' . $index);
             },
             'rejected' => function (RequestException $reason) {
-                $this->output->error('Oh, ' . $reason);
+                $this->line('Oh, ' . $reason);
             },
         ]);
 
