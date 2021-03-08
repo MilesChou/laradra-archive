@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use OpenIDConnect\Client;
 use OpenIDConnect\Exceptions\OpenIDProviderException;
-use OpenIDConnect\Token\TokenSet;
 use Ory\Hydra\Client\Api\PublicApi;
 use RuntimeException;
 
@@ -48,7 +47,6 @@ class RpController
         }
 
         try {
-            /** @var TokenSet $tokenSet */
             $tokenSet = $oidc->handleCallback($request->all(), [
                 'state' => $session->get('state'),
                 'redirect_uri' => env('HYDRA_REDIRECT_URI'),

@@ -30,7 +30,7 @@ class OpenIDConnectProvider extends ServiceProvider implements DeferrableProvide
             $providerConfig = json_decode((string)$hydra->discoverOpenIDConfiguration(), true);
             $jwksConfig = json_decode((string)$hydra->wellKnown(), true);
 
-            $provider = new ProviderMetadata($providerConfig, new JwkSet($jwksConfig));
+            $provider = new ProviderMetadata($providerConfig, $jwksConfig);
 
             $config = new Config(
                 $provider,

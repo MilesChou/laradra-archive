@@ -24,7 +24,7 @@
     },
     "require-dev": {
         "laravel/framework": "^6.20 | ^7.6 | ^8",
-        "oidc/core": "^0.8.0",
+        "oidc/core": "^0.10.0",
         "phpunit/phpunit": "^8.5 | ^9",
         "spatie/async": "^1.5",
         "squizlabs/php_codesniffer": "^3.5",

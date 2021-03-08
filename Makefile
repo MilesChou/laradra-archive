@@ -48,3 +48,6 @@ setup:
 		--scope openid,offline_access \
 		--token-endpoint-auth-method client_secret_basic \
 		--callbacks ${CLIENT_CALLBACK}
+
+login:
+	open http://web.localhost:8080/rp/login
