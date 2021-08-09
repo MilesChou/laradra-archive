@@ -2,7 +2,7 @@ version: '3'
 
 services:
   web:
-    image: 104corp/php-testing:7.3
+    image: ghcr.io/mileschou/php-tester:8.0
     container_name: web.localhost
     hostname: web.localhost
     ports:
@@ -24,7 +24,7 @@ services:
       - hydra
 
   hydra:
-    image: oryd/hydra:v1.2.3
+    image: oryd/hydra:v1.10.3
     container_name: hydra.localhost
     hostname: hydra.localhost
     ports:
@@ -51,13 +51,8 @@ services:
     depends_on:
       - hydra-migrate
 
-  jaeger:
-    image: jaegertracing/all-in-one:1.21.0
-    ports:
-      - "16686:16686/tcp"
-
   hydra-migrate:
-    image: oryd/hydra:v1.2.3
+    image: oryd/hydra:v1.10.3
     environment:
       - DSN=mysql://root:secret@tcp(mysqld:3306)/hydra?max_conns=20&max_idle_conns=4
     command:
@@ -71,3 +66,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: secret
       MYSQL_DATABASE: hydra
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.21.0
+    ports:
+      - "16686:16686/tcp"

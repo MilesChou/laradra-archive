@@ -4,7 +4,7 @@ CLIENT_ID := some-client
 CLIENT_SECRET := some-secret
 CLIENT_CALLBACK := http://web.localhost:8080/rp/callback
 
-.PHONY: all clean clean-all check test coverage
+.PHONY: all clean clean-all check test coverage setup teardown login
 
 # ---------------------------------------------------------------------
 
@@ -38,8 +38,6 @@ down:
 
 setup:
 	docker-compose exec hydra hydra --endpoint http://127.0.0.1:4445/ clients --skip-tls-verify \
-		delete ${CLIENT_ID}
-	docker-compose exec hydra hydra --endpoint http://127.0.0.1:4445/ clients --skip-tls-verify \
 		create \
 		--id ${CLIENT_ID} \
 		--secret ${CLIENT_SECRET} \
@@ -48,6 +46,10 @@ setup:
 		--scope openid,offline_access \
 		--token-endpoint-auth-method client_secret_basic \
 		--callbacks ${CLIENT_CALLBACK}
+
+teardown:
+	docker-compose exec hydra hydra --endpoint http://127.0.0.1:4445/ clients --skip-tls-verify \
+		delete ${CLIENT_ID}
 
 login:
 	open http://web.localhost:8080/rp/login
