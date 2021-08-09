@@ -58,7 +58,7 @@ class SimulateLogin extends Command
             ];
 
             if ($this->output->isVerbose()) {
-                $this->line('Send authorization request: ' . $authorizationEndpoint . Arr::query($query));
+                $this->line('Send authorization request: ' . $authorizationEndpoint . '?' . Arr::query($query));
             }
 
             $startTime = microtime(true);
