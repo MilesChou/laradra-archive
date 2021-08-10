@@ -30,7 +30,7 @@ log:
 	tail -f storage/logs/*.log
 
 up:
-	docker-compose up -d
+	docker-compose up -d --remove-orphans
 	docker-compose logs -f
 
 down:
