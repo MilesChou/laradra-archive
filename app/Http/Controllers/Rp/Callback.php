@@ -1,43 +1,18 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Rp;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use OpenIDConnect\Client;
 use OpenIDConnect\Exceptions\OpenIDProviderException;
-use Ory\Hydra\Client\Api\PublicApi;
 use RuntimeException;
 
 /**
  * @see http://web.localhost:8080/rp/login
  */
-class RpController
+class Callback
 {
-    public function login(Request $request, Client $oidc)
-    {
-        $parameters = array_merge([
-            'response_type' => 'code',
-            'scope' => 'openid offline_access',
-            'redirect_uri' => env('HYDRA_REDIRECT_URI'),
-        ], $request->all());
-
-        $authorizationUrl = $oidc->createAuthorizeRedirectResponse($parameters);
-
-        $request->session()->put('state', $oidc->getState());
-
-        return $authorizationUrl;
-    }
-
-    public function refreshToken(Request $request, PublicApi $hydra)
-    {
-        $refreshToken = $request->get('refresh_token');
-
-        $tokenResponse = $hydra->oauth2Token('refresh_token', null, $refreshToken);
-
-        dump(json_decode((string)$tokenResponse, true));
-    }
-
     public function callback(Request $request, Client $oidc)
     {
         $session = $request->session();

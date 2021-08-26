@@ -18,6 +18,7 @@ class Accept
             $completed = $admin->acceptLoginRequest($loginChallenge, new AcceptLoginRequest([
                 'subject' => $request->get('subject'),
                 'remember' => $request->has('remember'),
+                'rememberFor' => 86400,
             ]));
         } catch (ApiException $e) {
             Log::error('Accept login request ERROR', [

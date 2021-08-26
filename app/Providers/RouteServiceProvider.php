@@ -18,14 +18,12 @@ class RouteServiceProvider extends ServiceProvider
     protected function mapOpenidProviderRoutes(): void
     {
         Route::middleware('web')
-            ->namespace($this->namespace . '\\Provider')
             ->group(base_path('routes/openid_provider.php'));
     }
 
     protected function mapWebRoutes(): void
     {
         Route::middleware('web')
-            ->namespace($this->namespace)
             ->group(base_path('routes/web.php'));
     }
 }
