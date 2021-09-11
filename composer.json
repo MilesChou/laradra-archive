@@ -31,8 +31,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Laradra\\": "src",
-            "App\\": "app"
+            "App\\": "app",
+            "Laradra\\": "src"
         }
     },
     "autoload-dev": {

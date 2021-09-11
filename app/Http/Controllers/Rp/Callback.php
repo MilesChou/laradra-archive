@@ -13,7 +13,7 @@ use RuntimeException;
  */
 class Callback
 {
-    public function callback(Request $request, Client $oidc)
+    public function __invoke(Request $request, Client $oidc)
     {
         $session = $request->session();
 
