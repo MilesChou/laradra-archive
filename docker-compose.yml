@@ -1,4 +1,4 @@
-version: '3'
+version: '3.7'
 
 services:
   web:
@@ -6,7 +6,7 @@ services:
     container_name: web.localhost
     hostname: web.localhost
     ports:
-      - 8080:8080
+      - "8080:8080"
     working_dir: /var/www/html
     command: ["php", "-S", "0.0.0.0:8080", "-t", "public"]
     environment:
@@ -24,13 +24,13 @@ services:
       - hydra
 
   hydra:
-    image: oryd/hydra:v1.10.3
+    image: oryd/hydra:v2.1.0
     container_name: hydra.localhost
     hostname: hydra.localhost
     ports:
-      - 4444:4444
+      - "4444:4444"
     command:
-      serve all --dangerous-force-http
+      serve all --dev
     environment:
       DSN: mysql://root:secret@tcp(mysqld:3306)/hydra?max_conns=20&max_idle_conns=4
       URLS_SELF_ISSUER: http://hydra.localhost:4444
@@ -52,7 +52,7 @@ services:
       - hydra-migrate
 
   hydra-migrate:
-    image: oryd/hydra:v1.10.3
+    image: oryd/hydra:v2.1.0
     environment:
       - DSN=mysql://root:secret@tcp(mysqld:3306)/hydra?max_conns=20&max_idle_conns=4
     command:
@@ -60,14 +60,9 @@ services:
     restart: on-failure
 
   mysqld:
-    image: mysql:5.7
+    image: mysql:8.0.26
     ports:
-      - 3306:3306
+      - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: secret
       MYSQL_DATABASE: hydra
-
-  jaeger:
-    image: jaegertracing/all-in-one:1.21.0
-    ports:
-      - "16686:16686/tcp"
